@@ -10,6 +10,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import java.io.IOException;
+import java.io.StringReader;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -21,7 +32,23 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("NET", response);
+                        final MyHandler dataHandler = new MyHandler();
+                        SAXParserFactory spf = SAXParserFactory.newInstance();
+                        SAXParser sp = null;
+                        try {
+                            sp = spf.newSAXParser();
+                            XMLReader xr = sp.getXMLReader();
+                            xr.setContentHandler(dataHandler);
+                            xr.parse(new InputSource(new StringReader(response)));
+                        } catch (ParserConfigurationException e) {
+                            e.printStackTrace();
+                        } catch (SAXException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
                     }
                 }, new Response.ErrorListener() {
             @Override
