@@ -3,6 +3,8 @@ package com.example.student.db2017120701;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,11 +24,12 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 public class MainActivity extends AppCompatActivity {
-
+    ListView lv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        lv = (ListView) findViewById(R.id.listView);
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         StringRequest request = new UTF8StringRequest("https://udn.com/rssfeed/news/2/6638?ch=news",
                 new Response.Listener<String>() {
@@ -40,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
                             XMLReader xr = sp.getXMLReader();
                             xr.setContentHandler(dataHandler);
                             xr.parse(new InputSource(new StringReader(response)));
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                    MainActivity.this,
+                                    android.R.layout.simple_list_item_1,
+                                    dataHandler.mylist
+                            );
+                            lv.setAdapter(adapter);
                         } catch (ParserConfigurationException e) {
                             e.printStackTrace();
                         } catch (SAXException e) {
